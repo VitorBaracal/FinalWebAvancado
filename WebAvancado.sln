@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinalWebAvancado", "FinalWebAvancado\FinalWebAvancado.csproj", "{1AE547AB-6540-E1C8-277D-26628CEC6226}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1AE547AB-6540-E1C8-277D-26628CEC6226}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1AE547AB-6540-E1C8-277D-26628CEC6226}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1AE547AB-6540-E1C8-277D-26628CEC6226}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1AE547AB-6540-E1C8-277D-26628CEC6226}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4ABA22BC-D968-4BFD-8D98-B1E49B9D51E7}
+	EndGlobalSection
+EndGlobal
