@@ -6,9 +6,9 @@ namespace Api.Dto;
 public class UserDto
 {
     public int Id { get; set; }
-    [Required(ErrorMessage = EnumTypeAnottation.RequiredName)]
-    public string Nome { get; set; } = string.Empty;
+    [Required(ErrorMessage = EnumMessageAnottation.RequiredName)]
+    public string Name { get; set; } = string.Empty;
     
-    [Required(ErrorMessage = EnumTypeAnottation.RequiredLogin)]
+    [Required(ErrorMessage = EnumMessageAnottation.RequiredLogin)]
     public string Login { get; set; } = string.Empty;
 }

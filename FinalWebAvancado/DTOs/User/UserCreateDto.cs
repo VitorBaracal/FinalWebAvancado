@@ -5,17 +5,17 @@ namespace Api.Dto;
 
 public class UserCreateDto
 {
-    [Required(ErrorMessage = EnumTypeAnottation.RequiredName)]
+    [Required(ErrorMessage = EnumMessageAnottation.RequiredName)]
     public string Name { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = EnumTypeAnottation.RequiredLogin)]
+    [Required(ErrorMessage = EnumMessageAnottation.RequiredLogin)]
     public string Login { get; set; } = string.Empty;
 
 
-    [Required(ErrorMessage = EnumTypeAnottation.RequiredPassword)]
+    [Required(ErrorMessage = EnumMessageAnottation.RequiredPassword)]
     public string Password { get; set; } = string.Empty;
     
 
-    [Required(ErrorMessage = EnumTypeAnottation.RequiredConfirmPassword)]
+    [Required(ErrorMessage = EnumMessageAnottation.RequiredConfirmPassword)]
     public string ConfirmPassword { get; set; } = string.Empty;
 }
