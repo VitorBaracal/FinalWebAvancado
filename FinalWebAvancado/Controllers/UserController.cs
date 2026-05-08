@@ -48,7 +48,7 @@ public class UserController : ControllerBase
 
     [AllowAnonymous]
     [HttpPost]
-    public async Task<IActionResult> CreateUserAsync(UserCreateDto dto)
+    public async Task<IActionResult> CreateUserAsync(PostUserDto dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 

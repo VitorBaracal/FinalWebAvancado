@@ -6,6 +6,7 @@ namespace Api.Dto;
 public class UserDto
 {
     public int Id { get; set; }
+    
     [Required(ErrorMessage = EnumMessageAnottation.RequiredName)]
     public string Name { get; set; } = string.Empty;
     
