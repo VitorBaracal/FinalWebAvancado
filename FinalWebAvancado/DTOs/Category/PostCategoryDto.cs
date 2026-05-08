@@ -3,11 +3,8 @@ using Api.Enums;
 
 namespace Api.Dto;
 
-public class CategoryDto
+public class PostCategoryDto
 {
-    [Range(1, int.MaxValue, ErrorMessage = EnumMessageAnottation.RequiredId)]
-    public int Id { get; set; }
-
     [Range(1, int.MaxValue, ErrorMessage = EnumMessageAnottation.RequiredUserId)]
     public int UserId { get; set; }
 
