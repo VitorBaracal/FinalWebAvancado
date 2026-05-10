@@ -18,6 +18,23 @@ public class TaskController : ControllerBase
         _context = context;
     }
 
+    /* Get  */
+    [HttpGet]
+    public async Task<IActionResult> ListTasksAsync() {
+        var tasks = await _context.Tasks.ToListAsync();
+        var dtos = tasks.OrderBy(u => u.Id).Select(t => new TaskDto {
+            Id = t.Id,
+            UserId = t.UserId,
+            Name = t.Name,
+            Description = t.Description,
+            Level = t.Level,
+            Status = t.Status,
+            CreatedAt = t.CreatedAt,
+            UpdatedAt = t.UpdatedAt
+        });
+        return Ok(dtos);
+    }
+
     [HttpGet("{id:int}", Name = "GetTaskById")]
     public async Task<IActionResult> GetByIdAsync(int id) {
         var task = await _context.Tasks.FindAsync(id);
@@ -36,6 +53,7 @@ public class TaskController : ControllerBase
         });
     }
 
+    /* Post */
     [HttpPost]
     public async Task<IActionResult> CreateTaskAsync(PostTaskDto dto) {
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -70,5 +88,57 @@ public class TaskController : ControllerBase
                 CreatedAt = entity.CreatedAt,
                 UpdatedAt = entity.UpdatedAt
             });
-    }
+        }
+
+            /* Put */
+            [HttpPut("{id:int}")]
+            public async Task<IActionResult> UpdateAsync(int id, [FromBody] TaskDto dto)
+            {
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+
+                var task = await _context.Tasks.FindAsync(id);
+
+                if (task == null)
+                    return NotFound();
+
+                task.UserId = dto.UserId;
+                task.Name = dto.Name;
+                task.Description = dto.Description;
+                task.Level = dto.Level;
+                task.Status = dto.Status;
+                task.UpdatedAt = DateTime.UtcNow;
+
+                _context.Tasks.Update(task);
+
+                await _context.SaveChangesAsync();
+
+                return Ok(new TaskDto
+                {
+                    Id = task.Id,
+                    UserId = task.UserId,
+                    Name = task.Name,
+                    Description = task.Description,
+                    Level = task.Level,
+                    Status = task.Status,
+                    CreatedAt = task.CreatedAt,
+                    UpdatedAt = task.UpdatedAt
+                });
+            }
+
+            /* Delete */
+            [HttpDelete("{id:int}")]
+            public async Task<IActionResult> DeleteAsync(int id)
+            {
+                var task = await _context.Tasks.FindAsync(id);
+
+                if (task == null)
+                    return NotFound();
+
+                _context.Tasks.Remove(task);
+
+                await _context.SaveChangesAsync();
+
+                return NoContent();
+            }
 }
