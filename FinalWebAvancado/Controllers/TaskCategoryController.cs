@@ -72,4 +72,18 @@ public class TaskCategoryController : ControllerBase
                 CategoryId = entity.CategoryId
             });
     }
+
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> DeleteAsync(int id)
+    {
+        var link = await _context.TaskCategories.FirstOrDefaultAsync(tc => tc.Id == id);
+
+        if (link == null) return NotFound();
+
+        _context.TaskCategories.Remove(link);
+
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
 }

@@ -14,4 +14,6 @@ public static class EnumMessageReponse {
     public const string InvalidCategoryReference = "The specified category does not exist or does not belong to the user.";
 
     public const string TaskCategoryAlreadyLinked = "This task is already linked to this category.";
+
+    public const string UserHasDependentData = "Cannot delete user: related tasks, categories or task-category links exist.";
 }
