@@ -14,11 +14,11 @@ public class PostTaskDto
     [StringLength(4000)]
     public string? Description { get; set; }
 
-    [EnumDataType(typeof(EnumTaskLevel), ErrorMessage = EnumMessageAnottation.RequiredLevel)]
+    [EnumDataType(typeof(EnumTaskLevel), ErrorMessage = EnumMessageAnottation.InvalidLevelConstant)]
     [Required(ErrorMessage = EnumMessageAnottation.RequiredLevel)]
     public EnumTaskLevel Level { get; set; }
 
-    [EnumDataType(typeof(EnumTaskStatus), ErrorMessage = EnumMessageAnottation.RequiredStatus)]
+    [EnumDataType(typeof(EnumTaskStatus), ErrorMessage = EnumMessageAnottation.InvalidStatusConstant)]
     [Required(ErrorMessage = EnumMessageAnottation.RequiredStatus)]
     public EnumTaskStatus Status { get; set; }
 }

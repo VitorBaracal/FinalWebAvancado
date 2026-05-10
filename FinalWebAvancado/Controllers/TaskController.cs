@@ -18,11 +18,12 @@ public class TaskController : ControllerBase
         _context = context;
     }
 
-    /* Get  */
     [HttpGet]
     public async Task<IActionResult> ListTasksAsync() {
+
         var tasks = await _context.Tasks.ToListAsync();
-        var dtos = tasks.OrderBy(u => u.Id).Select(t => new TaskDto {
+
+        var response = tasks.OrderBy(u => u.Id).Select(t => new TaskDto {
             Id = t.Id,
             UserId = t.UserId,
             Name = t.Name,
@@ -32,11 +33,13 @@ public class TaskController : ControllerBase
             CreatedAt = t.CreatedAt,
             UpdatedAt = t.UpdatedAt
         });
-        return Ok(dtos);
+
+        return Ok(response);
     }
 
     [HttpGet("{id:int}", Name = "GetTaskById")]
     public async Task<IActionResult> GetByIdAsync(int id) {
+
         var task = await _context.Tasks.FindAsync(id);
 
         if (task == null) return NotFound();
@@ -53,16 +56,17 @@ public class TaskController : ControllerBase
         });
     }
 
-    /* Post */
     [HttpPost]
     public async Task<IActionResult> CreateTaskAsync(PostTaskDto dto) {
+
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
         var userExists = await _context.User.AnyAsync(u => u.Id == dto.UserId);
-        if (!userExists)
-            return BadRequest(new { message = EnumMessageReponse.InvalidUserReference });
+
+        if (!userExists) return BadRequest(new { message = EnumMessageReponse.InvalidUserReference });
 
         var utcNow = DateTime.UtcNow;
+
         var entity = new Api.Models.Task {
             UserId = dto.UserId,
             Name = dto.Name,
@@ -76,7 +80,8 @@ public class TaskController : ControllerBase
         _context.Tasks.Add(entity);
         await _context.SaveChangesAsync();
 
-        return CreatedAtRoute("GetTaskById",
+        return CreatedAtRoute(
+            "GetTaskById",
             new { id = entity.Id },
             new TaskDto {
                 Id = entity.Id,
@@ -88,57 +93,44 @@ public class TaskController : ControllerBase
                 CreatedAt = entity.CreatedAt,
                 UpdatedAt = entity.UpdatedAt
             });
-        }
+    }
 
-            /* Put */
-            [HttpPut("{id:int}")]
-            public async Task<IActionResult> UpdateAsync(int id, [FromBody] TaskDto dto)
-            {
-                if (!ModelState.IsValid)
-                    return BadRequest(ModelState);
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> UpdateAsync(int id, PutTaskDto dto)
+    {
+        var task = await _context.Tasks
+            .FirstOrDefaultAsync(t => t.Id == id);
 
-                var task = await _context.Tasks.FindAsync(id);
+        if (task is null) return NotFound();
 
-                if (task == null)
-                    return NotFound();
+        if (dto.Name is not null)
+            task.Name = dto.Name;
+        if (dto.Description is not null)
+            task.Description = dto.Description;
+        if (dto.Level is not null)
+            task.Level = dto.Level.Value;
+        if (dto.Status is not null)
+            task.Status = dto.Status.Value;
 
-                task.UserId = dto.UserId;
-                task.Name = dto.Name;
-                task.Description = dto.Description;
-                task.Level = dto.Level;
-                task.Status = dto.Status;
-                task.UpdatedAt = DateTime.UtcNow;
+        var utcNow = DateTime.UtcNow;
 
-                _context.Tasks.Update(task);
+        task.UpdatedAt = utcNow;
 
-                await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
+        return NoContent();
+    }
 
-                return Ok(new TaskDto
-                {
-                    Id = task.Id,
-                    UserId = task.UserId,
-                    Name = task.Name,
-                    Description = task.Description,
-                    Level = task.Level,
-                    Status = task.Status,
-                    CreatedAt = task.CreatedAt,
-                    UpdatedAt = task.UpdatedAt
-                });
-            }
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> DeleteAsync(int id)
+    {
+        var task = await _context.Tasks.FirstOrDefaultAsync(t => t.Id == id);
 
-            /* Delete */
-            [HttpDelete("{id:int}")]
-            public async Task<IActionResult> DeleteAsync(int id)
-            {
-                var task = await _context.Tasks.FindAsync(id);
+        if (task == null) return NotFound();
 
-                if (task == null)
-                    return NotFound();
+        _context.Tasks.Remove(task);
 
-                _context.Tasks.Remove(task);
+        await _context.SaveChangesAsync();
 
-                await _context.SaveChangesAsync();
-
-                return NoContent();
-            }
+        return NoContent();
+    }
 }
