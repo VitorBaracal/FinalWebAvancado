@@ -23,7 +23,7 @@ public class CategoryController : ControllerBase
 
         var category = await _context.Categories.ToListAsync();
 
-        var response = category.OrderBy(u => u.Id).Select(c => new TaskDto {
+        var response = category.OrderBy(u => u.Id).Select(c => new CategoryDto {
             Id = c.Id,
             UserId = c.UserId,
             Name = c.Name,
