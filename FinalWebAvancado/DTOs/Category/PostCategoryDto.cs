@@ -12,6 +12,6 @@ public class PostCategoryDto
     public string Name { get; set; } = string.Empty;
 
     [Required(ErrorMessage = EnumMessageAnottation.RequiredColorHex)]
-    [RegularExpression("^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$", ErrorMessage = EnumMessageAnottation.InvalidColorHex)]
+    [RegularExpression(EnumRegex.ColorHex, ErrorMessage = EnumMessageAnottation.InvalidColorHex)]
     public string ColorHex { get; set; } = string.Empty;
 }

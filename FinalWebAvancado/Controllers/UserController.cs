@@ -52,7 +52,8 @@ public class UserController : ControllerBase
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
-        if (dto.Password !=  dto.ConfirmPassword) return BadRequest(new { EnumMessageReponse.DistinctPasswords });
+        if (dto.Password != dto.ConfirmPassword)
+            return BadRequest(new { message = EnumMessageReponse.DistinctPasswords });
 
         var exists = await _context.User.AnyAsync(u => u.Login == dto.Login);
 

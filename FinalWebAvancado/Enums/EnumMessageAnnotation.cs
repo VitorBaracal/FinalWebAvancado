@@ -6,6 +6,8 @@ public static class EnumMessageAnottation {
     public const string RequiredLogin = "The field 'LOGIN' is required";
     public const string RequiredPassword = "The field 'PASSWORD' is required";
     public const string RequiredConfirmPassword = "The field 'CONFIRMPASSWORD' is required";
+
+    public const string PasswordRules = "Password must be at least 8 characters and include one uppercase letter and one special character.";
     public const string RequiredId = "The field 'ID' is required";
     public const string RequiredUserId = "The field 'USER_ID' is required";
     public const string RequiredLevel = "The field 'LEVEL' is required";

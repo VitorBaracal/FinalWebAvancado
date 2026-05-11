@@ -18,16 +18,16 @@ public class CategoryController : ControllerBase
         _context = context;
     }
 
-     [HttpGet]
-    public async Task<IActionResult> ListTasksAsync() {
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<CategoryDto>>> ListCategoriesAsync()
+    {
+        var categories = await _context.Categories.ToListAsync();
 
-        var category = await _context.Categories.ToListAsync();
-
-        var response = category.OrderBy(u => u.Id).Select(c => new CategoryDto {
+        var response = categories.OrderBy(c => c.Id).Select(c => new CategoryDto {
             Id = c.Id,
             UserId = c.UserId,
             Name = c.Name,
-            
+            ColorHex = c.ColorHex
         });
 
         return Ok(response);
@@ -74,25 +74,25 @@ public class CategoryController : ControllerBase
             });
     }
 
-     [HttpPut("{id:int}")]
-public async Task<IActionResult> UpdateAsync(int id, PutCategoryDto dto)
-{
-    var category = await _context.Categories
-        .FirstOrDefaultAsync(c => c.Id == id);
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> UpdateAsync(int id, PutCategoryDto dto)
+    {
+        var category = await _context.Categories
+            .FirstOrDefaultAsync(c => c.Id == id);
 
-    if (category is null)
-        return NotFound();
+        if (category is null)
+            return NotFound();
 
-    if (dto.Name is not null)
-        category.Name = dto.Name;
+        if (dto.Name is not null)
+            category.Name = dto.Name;
 
-    if (dto.ColorHex is not null)
-        category.ColorHex = dto.ColorHex;
+        if (dto.ColorHex is not null)
+            category.ColorHex = dto.ColorHex;
 
-    await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
 
-    return NoContent();
-}
+        return NoContent();
+    }
 
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> DeleteAsync(int id)

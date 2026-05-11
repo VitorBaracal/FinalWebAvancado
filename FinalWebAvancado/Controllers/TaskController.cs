@@ -19,11 +19,11 @@ public class TaskController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> ListTasksAsync() {
-
+    public async Task<ActionResult<IEnumerable<TaskDto>>> ListTasksAsync()
+    {
         var tasks = await _context.Tasks.ToListAsync();
 
-        var response = tasks.OrderBy(u => u.Id).Select(t => new TaskDto {
+        var response = tasks.OrderBy(t => t.Id).Select(t => new TaskDto {
             Id = t.Id,
             UserId = t.UserId,
             Name = t.Name,

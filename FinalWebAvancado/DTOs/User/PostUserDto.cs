@@ -12,8 +12,10 @@ public class PostUserDto
     public string Login { get; set; } = string.Empty;
 
     [Required(ErrorMessage = EnumMessageAnottation.RequiredPassword)]
+    [RegularExpression(EnumRegex.Password, ErrorMessage = EnumMessageAnottation.PasswordRules)]
     public string Password { get; set; } = string.Empty;
-    
+
     [Required(ErrorMessage = EnumMessageAnottation.RequiredConfirmPassword)]
+    [RegularExpression(EnumRegex.Password, ErrorMessage = EnumMessageAnottation.PasswordRules)]
     public string ConfirmPassword { get; set; } = string.Empty;
 }
