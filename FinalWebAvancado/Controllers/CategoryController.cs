@@ -18,6 +18,21 @@ public class CategoryController : ControllerBase
         _context = context;
     }
 
+     [HttpGet]
+    public async Task<IActionResult> ListTasksAsync() {
+
+        var category = await _context.Categories.ToListAsync();
+
+        var response = category.OrderBy(u => u.Id).Select(c => new TaskDto {
+            Id = c.Id,
+            UserId = c.UserId,
+            Name = c.Name,
+            
+        });
+
+        return Ok(response);
+    }
+
     [HttpGet("{id:int}", Name = "GetCategoryById")]
     public async Task<IActionResult> GetByIdAsync(int id) {
         var category = await _context.Categories.FindAsync(id);
@@ -57,5 +72,39 @@ public class CategoryController : ControllerBase
                 Name = entity.Name,
                 ColorHex = entity.ColorHex
             });
+    }
+
+     [HttpPut("{id:int}")]
+public async Task<IActionResult> UpdateAsync(int id, PutCategoryDto dto)
+{
+    var category = await _context.Categories
+        .FirstOrDefaultAsync(c => c.Id == id);
+
+    if (category is null)
+        return NotFound();
+
+    if (dto.Name is not null)
+        category.Name = dto.Name;
+
+    if (dto.ColorHex is not null)
+        category.ColorHex = dto.ColorHex;
+
+    await _context.SaveChangesAsync();
+
+    return NoContent();
+}
+
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> DeleteAsync(int id)
+    {
+        var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
+
+        if (category == null) return NotFound();
+
+        _context.Categories.Remove(category);
+
+        await _context.SaveChangesAsync();
+
+        return NoContent();
     }
 }
