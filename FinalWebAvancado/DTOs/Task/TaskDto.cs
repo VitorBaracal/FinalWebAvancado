@@ -19,4 +19,6 @@ public class TaskDto
     public DateTime CreatedAt { get; set; }
 
     public DateTime UpdatedAt { get; set; }
+
+    public List<CategoryDto> Categories { get; set; } = [];
 }

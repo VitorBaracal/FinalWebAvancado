@@ -21,15 +21,34 @@ public class TaskController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<TaskDto>>> ListTasksAsync()
     {
-        var tasks = await _context.Tasks.ToListAsync();
+        var tasks = await _context.Tasks.OrderBy(t => t.Id).ToListAsync();
 
-        var response = tasks.OrderBy(t => t.Id).Select(t => new TaskDto {
+        var taskIds = tasks.Select(t => t.Id).ToList();
+
+        var linksWithCategories = await (
+            from tc in _context.TaskCategories
+            join c in _context.Categories on tc.CategoryId equals c.Id
+            where taskIds.Contains(tc.TaskId)
+            orderby tc.TaskId, c.Id
+            select new { tc.TaskId, c.Id, c.UserId, c.Name, c.ColorHex }
+        ).ToListAsync();
+
+        var response = tasks.Select(t => new TaskDto {
             Id = t.Id,
             UserId = t.UserId,
             Name = t.Name,
             Description = t.Description,
             Level = t.Level,
             Status = t.Status,
+            Categories = linksWithCategories
+                .Where(x => x.TaskId == t.Id)
+                .Select(x => new CategoryDto {
+                    Id = x.Id,
+                    UserId = x.UserId,
+                    Name = x.Name,
+                    ColorHex = x.ColorHex
+                })
+                .ToList(),
             CreatedAt = t.CreatedAt,
             UpdatedAt = t.UpdatedAt
         });
@@ -44,6 +63,18 @@ public class TaskController : ControllerBase
 
         if (task == null) return NotFound();
 
+        var categories = await (
+            from tc in _context.TaskCategories
+            join c in _context.Categories on tc.CategoryId equals c.Id
+            where tc.TaskId == id
+            orderby c.Id
+            select new CategoryDto {
+                Id = c.Id,
+                UserId = c.UserId,
+                Name = c.Name,
+                ColorHex = c.ColorHex
+            }).ToListAsync();
+
         return Ok(new TaskDto {
             Id = task.Id,
             UserId = task.UserId,
@@ -51,6 +82,7 @@ public class TaskController : ControllerBase
             Description = task.Description,
             Level = task.Level,
             Status = task.Status,
+            Categories = categories,
             CreatedAt = task.CreatedAt,
             UpdatedAt = task.UpdatedAt
         });
@@ -90,6 +122,7 @@ public class TaskController : ControllerBase
                 Description = entity.Description,
                 Level = entity.Level,
                 Status = entity.Status,
+                Categories = [],
                 CreatedAt = entity.CreatedAt,
                 UpdatedAt = entity.UpdatedAt
             });
