@@ -23,6 +23,7 @@ export interface TaskDto {
   description?: string;
   level: number;
   status: number;
+  categories?: CategoryDto[];
 }
 
 export type CategoryDto = {
@@ -30,4 +31,12 @@ export type CategoryDto = {
   userId:number;
   name: string;
   colorHex:string;
+  taskCategoryId?: number;
+};
+
+export type TaskCategoryDto = {
+  id: number;
+  userId: number;
+  taskId: number;
+  categoryId: number;
 };

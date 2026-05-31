@@ -179,6 +179,70 @@ select:focus {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
+.list-item-content {
+  flex: 1;
+  display: grid;
+  gap: 8px;
+}
+
+.task-category-group {
+  margin-top: 8px;
+}
+
+/* ===== CHIPS ===== */
+.chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  background: var(--white);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.chip:hover:not(:disabled) {
+  border-color: var(--chip-color, var(--primary));
+}
+
+.chip:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.chip-selected {
+  background: var(--chip-color, var(--primary));
+  border-color: var(--chip-color, var(--primary));
+  color: var(--white);
+}
+
+.chip-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--chip-color, var(--primary));
+  flex-shrink: 0;
+}
+
+.chip-selected .chip-dot {
+  background: var(--white);
+}
+
+.chip-empty {
+  color: var(--muted);
+  font-size: 0.875rem;
+  margin: 0;
+}
+
 /* ===== ESTADOS ===== */
 .form-error {
   background: #fee2e2;

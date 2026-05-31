@@ -1,12 +1,87 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { listarTasks, criarTask, atualizarTask, removerTask } from '../api/taskService';
-import { TaskDto } from '../api/types';
+import { listarCategorias } from '../api/categoryService';
+import {
+  criarTaskCategory,
+  removerTaskCategory,
+} from '../api/taskCategoryService';
+import { CategoryDto, TaskDto } from '../api/types';
+
+function getSelectedCategoryId(task: TaskDto): number | null {
+  return task.categories?.[0]?.id ?? null;
+}
+
+function getTaskCategoryLinkId(task: TaskDto): number | null {
+  return task.categories?.[0]?.taskCategoryId ?? null;
+}
+
+async function salvarCategoriaDaTask(
+  userId: number,
+  taskId: number,
+  categoryId: number | null,
+  taskCategoryId: number | null
+) {
+  if (taskCategoryId !== null) {
+    await removerTaskCategory(taskCategoryId);
+  }
+
+  if (categoryId !== null) {
+    await criarTaskCategory(userId, taskId, categoryId);
+  }
+}
+
+type CategoryChipsProps = {
+  categories: CategoryDto[];
+  selectedId: number | null;
+  disabled?: boolean;
+  onSelect: (categoryId: number | null) => void;
+};
+
+function CategoryChips({
+  categories,
+  selectedId,
+  disabled = false,
+  onSelect,
+}: CategoryChipsProps) {
+  if (categories.length === 0) {
+    return (
+      <p className="chip-empty">
+        Nenhuma categoria cadastrada.
+      </p>
+    );
+  }
+
+  return (
+    <div className="chip-group" role="group" aria-label="Categorias">
+      {categories.map((category) => {
+        const isSelected = selectedId === category.id;
+
+        return (
+          <button
+            key={category.id}
+            type="button"
+            className={`chip ${isSelected ? 'chip-selected' : ''}`}
+            style={{ '--chip-color': category.colorHex } as React.CSSProperties}
+            disabled={disabled}
+            aria-pressed={isSelected}
+            onClick={() => onSelect(isSelected ? null : category.id)}
+          >
+            <span className="chip-dot" />
+            {category.name}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
 
 export function TaskPage() {
 
   const [tasks,setTasks] = useState<TaskDto[]>([]);
+  const [categories,setCategories] = useState<CategoryDto[]>([]);
   const [error,setError] = useState<string | null>(null);
   const [loading,setLoading] = useState(false);
+  const [savingCategoryTaskId,setSavingCategoryTaskId] = useState<number | null>(null);
 
   const [editing,setEditing] = useState<TaskDto | null>(null);
 
@@ -14,12 +89,17 @@ export function TaskPage() {
   const [name,setName] = useState('');
   const [description,setDescription] = useState('');
   const [level,setLevel] = useState<number>(1);
-  const [status,setStatus] = useState<number>(1);  
- 
+  const [status,setStatus] = useState<number>(1);
+  const [selectedCategoryId,setSelectedCategoryId] = useState<number | null>(null);
 
   const sortedTasks = useMemo(
     () => [...tasks].sort((a,b)=>a.name.localeCompare(b.name)),
     [tasks]
+  );
+
+  const sortedCategories = useMemo(
+    () => [...categories].sort((a,b)=>a.name.localeCompare(b.name)),
+    [categories]
   );
 
   async function refresh(){
@@ -29,8 +109,13 @@ export function TaskPage() {
 
     try{
 
-      const data = await listarTasks();
-      setTasks(data);
+      const [tasksData, categoriesData] = await Promise.all([
+        listarTasks(),
+        listarCategorias(),
+      ]);
+
+      setTasks(tasksData);
+      setCategories(categoriesData);
 
     }catch(err:any){
 
@@ -58,6 +143,7 @@ export function TaskPage() {
     setDescription('');
     setLevel(1);
     setStatus(1);
+    setSelectedCategoryId(null);
   }
 
   async function handleSubmit(
@@ -83,9 +169,23 @@ export function TaskPage() {
           payload
         );
 
+        await salvarCategoriaDaTask(
+          userId,
+          editing.id,
+          selectedCategoryId,
+          getTaskCategoryLinkId(editing)
+        );
+
       }else{
 
-        await criarTask(payload);
+        const created = await criarTask(payload);
+
+        await salvarCategoriaDaTask(
+          userId,
+          created.id,
+          selectedCategoryId,
+          null
+        );
       }
 
       resetForm();
@@ -98,6 +198,33 @@ export function TaskPage() {
         err?.message ??
         'Falha ao salvar tarefa.'
       );
+    }
+  }
+
+  async function handleTaskCategoryChange(
+    task: TaskDto,
+    categoryId: number | null
+  ) {
+    setSavingCategoryTaskId(task.id);
+    setError(null);
+
+    try {
+      await salvarCategoriaDaTask(
+        task.userId,
+        task.id,
+        categoryId,
+        getTaskCategoryLinkId(task)
+      );
+
+      await refresh();
+    } catch (err: any) {
+      setError(
+        err?.response?.data?.message ??
+        err?.message ??
+        'Falha ao atualizar categoria da tarefa.'
+      );
+    } finally {
+      setSavingCategoryTaskId(null);
     }
   }
 
@@ -187,6 +314,18 @@ export function TaskPage() {
 
         </div>
 
+        <div className="form-group">
+
+          <label>Categoria</label>
+
+          <CategoryChips
+            categories={sortedCategories}
+            selectedId={selectedCategoryId}
+            onSelect={setSelectedCategoryId}
+          />
+
+        </div>
+
         <button
           className="btn-primary"
           type="submit"
@@ -219,7 +358,7 @@ export function TaskPage() {
             className="list-item"
           >
 
-            <div>
+            <div className="list-item-content">
 
               <strong>
                 {task.name}
@@ -235,6 +374,21 @@ export function TaskPage() {
 
               <div>
                 Status: {task.status}
+              </div>
+
+              <div className="form-group task-category-group">
+
+                <label>Categoria</label>
+
+                <CategoryChips
+                  categories={sortedCategories}
+                  selectedId={getSelectedCategoryId(task)}
+                  disabled={savingCategoryTaskId === task.id}
+                  onSelect={(categoryId) =>
+                    void handleTaskCategoryChange(task, categoryId)
+                  }
+                />
+
               </div>
 
             </div>
@@ -253,6 +407,7 @@ export function TaskPage() {
                   );
                   setLevel(task.level);
                   setStatus(task.status);
+                  setSelectedCategoryId(getSelectedCategoryId(task));
                 }}
               >
                 Editar

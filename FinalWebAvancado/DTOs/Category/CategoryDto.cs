@@ -9,4 +9,6 @@ public class CategoryDto
     public string Name { get; set; } = string.Empty;
 
     public string ColorHex { get; set; } = string.Empty;
+
+    public int? TaskCategoryId { get; set; }
 }

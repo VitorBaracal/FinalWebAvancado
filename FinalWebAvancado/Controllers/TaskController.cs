@@ -30,7 +30,7 @@ public class TaskController : ControllerBase
             join c in _context.Categories on tc.CategoryId equals c.Id
             where taskIds.Contains(tc.TaskId)
             orderby tc.TaskId, c.Id
-            select new { tc.TaskId, c.Id, c.UserId, c.Name, c.ColorHex }
+            select new { tc.TaskId, TaskCategoryId = tc.Id, c.Id, c.UserId, c.Name, c.ColorHex }
         ).ToListAsync();
 
         var response = tasks.Select(t => new TaskDto {
@@ -46,7 +46,8 @@ public class TaskController : ControllerBase
                     Id = x.Id,
                     UserId = x.UserId,
                     Name = x.Name,
-                    ColorHex = x.ColorHex
+                    ColorHex = x.ColorHex,
+                    TaskCategoryId = x.TaskCategoryId
                 })
                 .ToList(),
             CreatedAt = t.CreatedAt,
@@ -72,7 +73,8 @@ public class TaskController : ControllerBase
                 Id = c.Id,
                 UserId = c.UserId,
                 Name = c.Name,
-                ColorHex = c.ColorHex
+                ColorHex = c.ColorHex,
+                TaskCategoryId = tc.Id
             }).ToListAsync();
 
         return Ok(new TaskDto {
