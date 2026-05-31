@@ -8,16 +8,19 @@ export async function listarTasks() {
   return data;
 }
 
-export async function criarTask(
-  task:Omit<TaskDto,'id'>
-){
-  const { data } =
-    await http.post<TaskDto>(
+export async function criarTask(task: Omit<TaskDto, 'id'>) {
+  try {
+    const { data } = await http.post<TaskDto>(
       '/api/Task',
       task
     );
 
-  return data;
+    return data;
+  } catch (error: any) {
+    console.log('Payload enviado:', task);
+    console.log('Erro da API:', error.response?.data);
+    throw error;
+  }
 }
 
 export async function atualizarTask(

@@ -21,7 +21,7 @@ export function Layout() {
           {!auth && <Link to="/register">Cadastro</Link>}
 
           {auth && <Link to="/categorias">Categorias</Link>}
-          {auth && <Link to="/produtos">Produtos</Link>}
+          {auth && <Link to="/tasks">Tarefas</Link>}
         </nav>
 
         <div className="app-user">

@@ -13,8 +13,9 @@ export function TaskPage() {
   const [userId,setUserId] = useState(1);
   const [name,setName] = useState('');
   const [description,setDescription] = useState('');
-  const [level,setLevel] = useState('Low');
-  const [status,setStatus] = useState('Pending');
+  const [level,setLevel] = useState<number>(1);
+  const [status,setStatus] = useState<number>(1);  
+ 
 
   const sortedTasks = useMemo(
     () => [...tasks].sort((a,b)=>a.name.localeCompare(b.name)),
@@ -55,8 +56,8 @@ export function TaskPage() {
     setUserId(1);
     setName('');
     setDescription('');
-    setLevel('Low');
-    setStatus('Pending');
+    setLevel(1);
+    setStatus(1);
   }
 
   async function handleSubmit(
@@ -139,32 +140,34 @@ export function TaskPage() {
 
         </div>
 
-        <div className="form-group">
+      <div className="form-group">
 
-          <label>Prioridade</label>
+            <label>Prioridade</label>
 
-         <select
-            value={status}
-            onChange={(e)=>setStatus(e.target.value)}
-          >
-            <option value="Pending">
-              Pendente
-            </option>
+            <select
+                value={level}
+                onChange={(e) =>
+                setLevel(Number(e.target.value))
+                }
+            >
+                <option value={1}>
+                Baixa
+                </option>
 
-            <option value="InProgress">
-              Em andamento
-            </option>
+                <option value={2}>
+                Média
+                </option>
 
-            <option value="Completed">
-              Concluída
-            </option>
+                <option value={3}>
+                Alta
+                </option>
 
-            <option value="Cancelled">
-              Cancelada
-            </option>
-        </select>
+                <option value={4}>
+                Crítica
+                </option>
+            </select>
 
-        </div>
+            </div>
 
         <div className="form-group">
 
@@ -172,18 +175,15 @@ export function TaskPage() {
 
           <select
             value={status}
-            onChange={(e)=>
-              setStatus(e.target.value)
+            onChange={(e) =>
+                setStatus(Number(e.target.value))
             }
-          >
-            <option value="Pending">
-              Pendente
-            </option>
-
-            <option value="Completed">
-              Concluída
-            </option>
-          </select>
+            >
+            <option value={1}>Pendente</option>
+            <option value={2}>Em andamento</option>
+            <option value={3}>Concluída</option>
+            <option value={4}>Cancelada</option>
+            </select>
 
         </div>
 

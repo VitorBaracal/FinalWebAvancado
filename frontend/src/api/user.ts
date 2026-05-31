@@ -6,6 +6,10 @@ export async function cadastrarUsuario(payload: {
   senha: string;
   confirmarSenha: string;
 }) {
-  await http.post('/api/Usuarios', payload);
+  await http.post('/api/User', {
+    name: payload.nome,
+    login: payload.login,
+    password: payload.senha,
+    confirmPassword: payload.confirmarSenha,
+  });
 }
-

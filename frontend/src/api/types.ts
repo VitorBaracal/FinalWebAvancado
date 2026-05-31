@@ -16,14 +16,14 @@ export type TaskStatus =
   | 'Completed'
   | 'Cancelled';
 
-export type TaskDto = {
+export interface TaskDto {
   id: number;
   userId: number;
   name: string;
   description?: string;
-  level: string;
-  status: string;
-};
+  level: number;
+  status: number;
+}
 
 export type CategoryDto = {
   id: number;

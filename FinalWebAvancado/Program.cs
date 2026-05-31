@@ -20,7 +20,7 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseMySql(conn, Se
 
 builder.Services.AddCors(options =>{
     options.AddPolicy("FullAccess", policy =>
-        policy.WithOrigins("https://localhost:3000")
+        policy.WithOrigins("http://localhost:3000")
               .AllowAnyHeader()
               .AllowAnyMethod());
 });
@@ -33,7 +33,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuer = false,   
             ValidateAudience = false, 
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(key),
+            IssuerSigningKey = new SymmetricSecurityKey(key),   
             ClockSkew = TimeSpan.Zero 
         };
     });
