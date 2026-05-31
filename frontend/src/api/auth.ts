@@ -11,8 +11,8 @@ export async function login(login: string, senha: string) {
   );
 
   localStorage.setItem('token', data.token);
-  localStorage.setItem('nome', data.nome);
-  localStorage.setItem('usuario', data.usuario);
+  localStorage.setItem('nome', data.name);
+  localStorage.setItem('usuario', data.user);
 
   return data;
 }

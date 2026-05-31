@@ -1,7 +1,7 @@
 export type LoginResponse = {
   token: string;
-  nome: string;
-  usuario: string;
+  name: string;
+  user: string;
 };
 
 export type TaskLevel =
