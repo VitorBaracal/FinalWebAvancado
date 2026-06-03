@@ -94,7 +94,7 @@ export function RegisterPage() {
 
         <div className="form-group">
 
-          <label>Login</label>
+          <label>Email</label>
 
           <input
             value={login}
